@@ -41,7 +41,7 @@ To remove all compiled objects and the executable, run:
 
 The simulation must be executed from the project root to ensure it can locate the required `run/` output directory. It needs eight positional arguments:
 
-`./bin/epidemic_simulator <sim_len> <box_len> <n_walk> <n_sick> <n_imm> <seed> <p_sick> <p_heal>`
+`./bin/epidemic_simulator <sim_len> <box_len> <n_walk> <n_sick> <n_imm> <p_sick> <p_heal> <seed>`
 
 Example inputs:
 
