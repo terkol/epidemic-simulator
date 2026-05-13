@@ -6,7 +6,7 @@ program epidemic_simulator
     integer, allocatable :: walk_pos(:,:)
     integer, allocatable :: walk_cond(:)
     integer :: i,j
-    character(len=256) :: arg, fname, path
+    character(len=256) :: arg, fname, run
 
     if (command_argument_count() /= 8) then
         print*, 'ERROR: program requires eight inputs: sim_len, box_len, n_walk, n_sick, n_imm, seed, p_sick, p_heal'
@@ -67,7 +67,7 @@ program epidemic_simulator
 
     call get_command_argument(8, arg)
     read(arg,*) seed
-    print*, 'Inputs:'
+    write(*,'(A)') "Inputs:"
     print*,'Simulation length',sim_len
     print*,'Box side length', box_len
     print*,'Amount of walkers', n_walk
@@ -86,13 +86,13 @@ program epidemic_simulator
     write(fname,'(I0,"_",I0,"_",I0,"_",I0,"_",I0,"_",F0.3,"_",F0.3,"_",I0,".txt")') &
         sim_len,box_len, n_walk, n_sick, n_imm, p_sick,p_heal,seed
 
-    path = trim('run')//"/"//trim(fname)
-    
-    open(1, file=path, action="write", status="replace")
+    open(1, file=trim('run')//"/"//trim(fname), action="write", status="replace")
+    open(2, file=trim('run')//"/"//"epidemic.xyz", action="write", status="replace")
+
     write(1,'(A7)') 'inf,imm'
     write(1,'(I0,",",I0)') count(walk_cond==1), count(walk_cond==2)
     print*
-    write(*,'(A)', advance='no') "Simulating"
+    write(*,'(A)', advance='no') "Simulating..."
     call initialize(box_len, walk_pos, walk_cond, n_sick, n_imm) ! Set initial positions and health conditions
 
     do i=1, sim_len
@@ -100,26 +100,22 @@ program epidemic_simulator
         call move_walkers(walk_pos, box_len) 
         call infect_walkers(walk_pos, walk_cond, p_sick)
         call heal_walkers(walk_pos, walk_cond, p_heal)
-
+        ! Write the amount of infected and immune walkers into the .txt file
         write(1,'(I0,",",I0)') count(walk_cond==1), count(walk_cond==2)
-        if (count(walk_cond == 1) == 0) exit ! Terminate early if no infected left
-    enddo
-    close(1)
 
-    open(2, file="epidemic.xyz", action="write", status="replace")
-    call initialize(box_len, walk_pos, walk_cond, n_sick, n_imm)
-    do i=1, sim_len
-        call move_walkers(walk_pos, box_len)
-        call infect_walkers(walk_pos, walk_cond, p_sick)
-        call heal_walkers(walk_pos, walk_cond, p_heal)
+        ! Write the positions of all walkers into the .xyz file
         write(2,'(I0)') n_walk
         write(2,'(A5,1X,I0)') '#Step',i
         do j=1,n_walk
             write(2,'(I0,1X,I0,1X,I0,1X,I0)') 1,walk_pos(j,1),walk_pos(j,2),walk_cond(j)
         enddo
-        if (count(walk_cond == 1) == 0) exit
+        ! if (count(walk_cond == 1) == 0) exit ! Stop early if no infected left
     enddo
+    close(1)
     close(2)
-    print*, 'Simulation complete'
-    print*, 'Data stored in file ', path
+
+    write(*,'(A)') "Simulation complete"
+    print*, 'Data stored in files: '
+    print*, trim('run')//"/"//trim(fname)
+    print*, trim('run')//"/"//"epidemic.xyz"
 end program epidemic_simulator
