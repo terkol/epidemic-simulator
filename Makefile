@@ -3,6 +3,7 @@ SRC    := src
 BUILD  := build
 BIN    := bin
 
+
 TARGET := $(BIN)/epidemic_simulator
 
 SRCS := $(SRC)/mtfort90.f90 $(SRC)/utils.f90 $(SRC)/epidemic_simulator.f90
