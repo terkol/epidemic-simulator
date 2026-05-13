@@ -20,23 +20,23 @@ The simulator writes a time series of infected and immune counts to a text file 
 
 ## Directory layout (example)
 
-project/
-    Makefile
-    Project-Report.pdf
-    README.md
-
-    src/
-        mtmod.f90
-        utils.f90
-        epidemic_simulation.f90
-
-    run/
+    project/
+        Makefile
+        Project-Report.pdf
         README.md
-        output.dat
 
-    build/
+        src/
+            mtmod.f90
+            utils.f90
+            epidemic_simulation.f90
 
-    bin/
+        run/
+            README.md
+            output.dat
+
+        build/
+
+        bin/
 
 ## Compilation
 
