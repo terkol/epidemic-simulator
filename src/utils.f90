@@ -35,8 +35,9 @@ contains
             y_moves = -1    ! 4 becomes -1 for y_moves
             x_moves = 0
         endwhere
-        walk_pos(:,1) = modulo(walk_pos(:,1) + x_moves,box_len) ! Modulo works better than mod for PBCs, which allows negative numbers, 
-        walk_pos(:,2) = modulo(walk_pos(:,2) + y_moves,box_len) ! effectively doubling the box side length from the input. 
+        ! PBC
+        walk_pos(:,1) = modulo(walk_pos(:,1) + x_moves,box_len)
+        walk_pos(:,2) = modulo(walk_pos(:,2) + y_moves,box_len) 
     end subroutine move_walkers
 
     subroutine infect_walkers(walk_pos, walk_cond, p_sick)

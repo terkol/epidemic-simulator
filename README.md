@@ -1,93 +1,63 @@
-# Epidemic Simulator
+# Epidemic Simulator (Spatial SIR Model)
 
-## Overview
+This project contains a Fortran-based agent simulation of an infectious disease spreading through a population. It utilizes a spatial Susceptible-Infected-Recovered (SIR) model where individuals move randomly on a 2D discrete grid subject to periodic boundary conditions.
 
-This project simulates the spread of an infectious disease using an agent-based random-walk model on a 2D periodic grid. Each walker is in one of three states:
-
-- `0`: susceptible
-
-- `1`: infected
-
-- `2`: immune (recovered / vaccinated)
-
-The simulator writes a time series of infected and immune counts to a text file in `run/` named after the inputs. 
-
-## Requirements
-
-- A Fortran compiler (I used `gfortran 13.3.0`)
-
-- `make` 
-
-## Directory layout (example)
+## Project Layout
 
     project/
-        Makefile
-        Project-Report.pdf
-        README.md
-
-        src/
-            mtmod.f90
-            utils.f90
-            epidemic_simulation.f90
-
-        run/
-            README.md
-            output.dat
-
-        build/
-
-        bin/
+    ├── Makefile                # Build automation script
+    ├── Project-Report.pdf      # Detailed academic report of the simulation
+    ├── README.md               # This file
+    ├── src/
+    │   ├── mtfort90.f90        # Mersenne Twister random number generator module
+    │   ├── utils.f90           # Core simulation subroutines
+    │   └── epidemic_simulator.f90 # Main program
+    ├── run/
+    │   ├── README.md           # Documentation for output data
+    │   └── output.dat          # (Generated) Population time-series outputs
+    ├── build/                  # (Generated) Object files (*.o) and modules (*.mod)
+    └── bin/                    # (Generated) Compiled executable
 
 ## Compilation
 
-### Build with `make`
+The project uses make for build automation. The Makefile is configured for the gfortran compiler.
 
-From the project root:
+To compile the simulation, run the following command from the project root:
 
-`$ make`
+`make`
 
-This produces the executable:
+This will automatically create the build/ and bin/ directories, compile the source files, and generate the executable at bin/epidemic_simulator.
 
-`bin/epidemic_simulation`
-
-Build artifacts can be cleaned with:
+To remove all compiled objects and the executable, run:
+Bash
 
 `make clean`
 
-## Input
+Usage
 
-The executable expects 7 command-line arguments in this order:
+The simulation must be executed from the project root to ensure it can locate the required `run/` output directory. It requires exactly eight positional arguments:
 
-``sim_len`` (integer): maximum number of time steps
+`./bin/epidemic_simulator <sim_len> <box_len> <n_walk> <n_sick> <n_imm> <seed> <p_sick> <p_heal>`
 
-``box_len`` (integer): grid side length L (grid is L x L)
+## Argument Definitions
 
-``n_walk`` (integer): number of walkers
+- sim_len (Integer): Maximum number of time steps. The simulation terminates early if the infected count reaches zero.
+- box_len (Integer): Side length of the square 2D simulation grid.n_walk (Integer): Total number of walkers.
+- n_sick (Integer): Initial number of infected individuals ($t=0$).
+- n_imm (Integer): Initial number of immune individuals ($t=0$). (Note: n_sick + n_imm $\le$ n_walk)
+- seed (Integer): Initial seed for the pseudo-random number generator.- p_sick (Real): Probability ($0.0 - 1.0$) of transmission when a susceptible and infected walker share a coordinate.
+- p_heal (Real): Probability ($0.0 - 1.0$) per time step that an infected walker recovers.
 
-``n_sick`` (integer): number of initially infected walkers
+## Outputs
 
-``n_imm`` (integer): number of initially immune walkers
+The program generates two files per run:
 
-``p_sick`` (real): probability a susceptible becomes infected when exposed
+- Time-Series Data (run/<params>.txt): A CSV file logging the aggregate number of infected and immune walkers at each time step. The filename is dynamically generated from the input parameters.
 
-``p_heal`` (real): probability an infected recovers per step
+- Trajectory File (epidemic.xyz): An XYZ-formatted spatial history file saved to the project root. Visualization software may interpret the health condition parameter ($0$=Susceptible, $1$=Infected, $2$=Immune) as the Z-coordinate.
 
-`seed` (integer): seed for the random number generator
+## Video of the Simulation
 
-Example (from run/):
+Visualized with ovito
 
-``../bin/epidemic_simulation 10000 100 1000 10 0 0.5 0.005 42``
-
-## Output
-
-The program writes data into file `sim_len`_ `box_len`_ `n_walk`_ `n_sick`_ `n_imm`_ `p_sick`_ `p_heal`_`seed.txt`.
-
-Line 1: `inf,imm`
-
-Lines $2..$`sim_len+1`: two integers per simulated step: the infected count (inf) and the immune count (imm). 
-
-A second output `epidemic.xyz` exists but is currently commented out. If enabled, it would write walker positions and states each step for visualizing their motion and the spread of the epidemic. 
-
-If the infected count becomes zero, the simulation ends early.
-
-
+![icon](https://raw.githubusercontent.com/terkol/epidemic-simulator/main/simulation.gif)
