@@ -22,7 +22,7 @@ contains
         integer :: y_moves(size(walk_pos(:,1)))
         integer :: i
         y_moves = 0
-        do i=1, size(x_moves) ! Generate all moves that will be performed this step
+        do i=1, size(x_moves) ! Generate all moves that are performed this step
             x_moves(i) = int(grnd()*5)
         enddo
         ! 0 and 1 stay unmodified in x_moves
