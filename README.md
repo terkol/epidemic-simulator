@@ -19,6 +19,10 @@ This project contains a Fortran-based agent simulation of an infectious disease 
     ├── build/                  # (Generated) Object files (*.o) and modules (*.mod)
     └── bin/                    # (Generated) Compiled executable
 
+## Project Report
+
+Detailed documentation regarding the theoretical SIR model, simulation methodology, and quantitative analysis of the results is provided in `Project-Report.pdf`. This report contains the academic context, model validation, and a discussion of the observed epidemic dynamics.
+
 ## Compilation
 
 The project uses make for build automation. The Makefile is configured for the `gfortran` compiler.
